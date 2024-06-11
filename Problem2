@@ -1,0 +1,42 @@
+#include <iostream>
+#include <vector>
+#include <climits> // for INT_MAX
+
+using namespace std;
+
+// Function to find the length of the shortest subarray with sum at least k
+int shortestSubarray(vector<int>& nums, int k) {
+    int n = nums.size();
+    int minLength = INT_MAX;
+    int windowSum = 0;
+    int left = 0;
+
+    for (int right = 0; right < n; right++) {
+        windowSum += nums[right];
+
+        // While windowSum is greater than or equal to k, update minLength
+        while (windowSum >= k) {
+            minLength = min(minLength, right - left + 1);
+            windowSum -= nums[left];
+            left++;
+        }
+    }
+
+    return minLength == INT_MAX ? -1 : minLength;
+}
+
+int main() {
+    int n, k;
+    cin >> n >> k;
+
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) {
+        cin >> nums[i];
+    }
+
+    int shortestLength = shortestSubarray(nums, k);
+
+    cout << shortestLength << endl;
+
+    return 0;
+}
