@@ -1,0 +1,78 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+
+using namespace std;
+
+// Helper function to calculate the sum of digits of a string
+int sumOfDigits(const string& s) {
+    int sum = 0;
+    for (char ch : s) {
+        sum += ch - '0';
+    }
+    return sum;
+}
+
+int countValidPairs(const vector<string>& strings) {
+    // Group strings by their lengths
+    unordered_map<int, vector<string>> lengthDict;
+    for (const string& s : strings) {
+        lengthDict[s.length()].push_back(s);
+    }
+    
+    // Calculate sum of digits for each string and store in a new dictionary
+    unordered_map<int, vector<pair<string, int>>> sumDict;
+    for (const auto& entry : lengthDict) {
+        int length = entry.first;
+        for (const string& s : entry.second) {
+            sumDict[length].emplace_back(s, sumOfDigits(s));
+        }
+    }
+    
+    // To count valid pairs
+    int count = 0;
+    for (const auto& entry1 : sumDict) {
+        int l1 = entry1.first;
+        for (const auto& entry2 : sumDict) {
+            int l2 = entry2.first;
+            if (l1 + l2 == 12) {
+                if (l1 == l2) {
+                    const auto& vec1 = entry1.second;
+                    for (size_t i = 0; i < vec1.size(); ++i) {
+                        for (size_t j = i + 1; j < vec1.size(); ++j) {
+                            if (vec1[i].second + vec1[j].second == 50) {
+                                count++;
+                            }
+                        }
+                    }
+                } else {
+                    const auto& vec1 = entry1.second;
+                    const auto& vec2 = entry2.second;
+                    for (const auto& p1 : vec1) {
+                        for (const auto& p2 : vec2) {
+                            if (p1.second + p2.second == 50) {
+                                count++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    return count;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<string> strings(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> strings[i];
+    }
+    int result = countValidPairs(strings);
+    cout << result << endl;
+    return 0;
+}
