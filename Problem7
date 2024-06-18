@@ -1,0 +1,55 @@
+#include <iostream>
+#include <vector>
+#include <map>
+
+using namespace std;
+const int MOD = 998244353;
+
+// Function to compute power of a number under modulo
+long long mod_exp(long long base, long long exp, long long mod) {
+    long long result = 1;
+    while (exp > 0) {
+        if (exp % 2 == 1)
+            result = (result * base) % mod;
+        base = (base * base) % mod;
+        exp /= 2;
+    }
+    return result;
+}
+
+// Function to compute the number of ways to get sum N using k-faced dice
+long long num_ways(long long N, int k) {
+    if (N < k) {
+        return mod_exp(k, N, MOD);
+    }
+    
+    vector<long long> dp(N + 1, 0);
+    dp[0] = 1; // There's one way to make sum 0: no dice throws
+
+    for (int i = 1; i <= N; ++i) {
+        for (int j = 1; j <= k; ++j) {
+            if (i - j >= 0) {
+                dp[i] = (dp[i] + dp[i - j]) % MOD;
+            }
+        }
+    }
+    
+    return dp[N];
+}
+
+int main() {
+    int T;
+    cin >> T;
+    vector<pair<long long, int>> test_cases(T);
+    for (int i = 0; i < T; ++i) {
+        cin >> test_cases[i].first >> test_cases[i].second;
+    }
+
+    for (int i = 0; i < T; ++i) {
+        long long N = test_cases[i].first;
+        int K = test_cases[i].second;
+        cout << num_ways(N, K) << endl;
+    }
+
+    return 0;
+}
